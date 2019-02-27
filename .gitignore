@@ -8,11 +8,11 @@
 # if you remove the above rule, at least ignore the following:
 
 # MHA Docker example
-employees_master/lib/
-employees_master/log/
-employees_slave*/lib/
-employees_slave*/log/
-employees_share/mha.log
+mha_master/lib/
+mha_master/log/
+mha_slave*/lib/
+mha_slave*/log/
+mha_manager/log/
 
 # User-specific stuff:
 # .idea/workspace.xml

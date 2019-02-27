@@ -6,7 +6,7 @@ set -eo pipefail
 shopt -s nullglob
 dir_cnf=/mha_share
 file_cnf="$dir_cnf"/application.cnf
-haproxy_file_cnf="$dir_cnf"/haproxy.cfg
+haproxy_file_cnf=/preparation/haproxy.cfg
 generated_flag="# generated"
 
 # 传输需要检测的参数的名称, 如果不存在则抛出异常
