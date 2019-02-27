@@ -38,5 +38,7 @@ log_bin = /var/log/mysql/mysql-bin
 log_bin_index = /var/log/mysql/mysql-bin.index
 binlog_format = row
 server_id = 101
-gtid_mode = ON
+
 enforce_gtid_consistency = ON
+gtid_mode = ON
+log_slave_updates = ON

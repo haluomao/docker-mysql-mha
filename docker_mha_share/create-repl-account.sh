@@ -1,6 +1,5 @@
 #!/bin/bash
 # usage: 生成MySQL的复制账户
-# author: prontera@github
 
 #set -x
 set -eo pipefail
@@ -11,21 +10,23 @@ if [[ -z "$MYSQL_ROOT_PASSWORD" ]]; then
     exit 1
 fi
 
-mysql=( mysql -p"$MYSQL_ROOT_PASSWORD" )
+mysql_cmd=( mysql -p"$MYSQL_ROOT_PASSWORD" )
 
-for i in {30..0}; do
-	if echo 'SELECT 1' | "${mysql[@]}" &> /dev/null; then
+for i in {10..0}; do
+	echo "$HOSTNAME MySQL init process in progress..."
+	if echo 'SELECT 1' | "${mysql_cmd[@]}" &> /dev/null; then
+		echo "$HOSTNAME MySQL init process done!"
 		break
 	fi
-	echo "$HOSTNAME MySQL init process in progress..."
-	sleep 2
+    sleep 1
 done
+
 if [ "$i" = 0 ]; then
 	echo >&2 "$HOSTNAME MySQL init process failed."
 	exit 1
 fi
 
-"${mysql[@]}" <<-EOSQL
+"${mysql_cmd[@]}" <<-EOSQL
 	GRANT REPLICATION SLAVE ON *.* TO "$MYSQL_REPL_NAME"@"172.%" IDENTIFIED BY "${MYSQL_REPL_PASSWORD:-}";
 	GRANT ALL PRIVILEGES ON *.* TO "$MYSQL_MHA_NAME"@"172.%" IDENTIFIED BY "${MYSQL_MHA_PASSWORD:-}";
 	GRANT REPLICATION SLAVE ON *.* TO "$MYSQL_REPL_NAME"@"192.%" IDENTIFIED BY "${MYSQL_REPL_PASSWORD:-}";

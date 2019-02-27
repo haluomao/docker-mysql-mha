@@ -1,12 +1,12 @@
 #!/bin/bash
 # usage: 在MHA manager上运行, 用于初始化配置文件
-# author: prontera@github
 
 #set -x
 set -eo pipefail
 shopt -s nullglob
 dir_cnf=/mha_share
 file_cnf="$dir_cnf"/application.cnf
+haproxy_file_cnf="$dir_cnf"/haproxy.cfg
 generated_flag="# generated"
 
 # 传输需要检测的参数的名称, 如果不存在则抛出异常
@@ -54,12 +54,35 @@ else
     init_conf "$@"
 fi
 
+init_haproxy_conf(){
+    echo "    $generated_flag" >> "$haproxy_file_cnf"
+
+    i=1
+    for arg; do
+        if [[ "$arg" == "master" ]]; then
+            echo "    server server$i master:3306" >> "$haproxy_file_cnf"
+            echo "added host \"$arg\" to mha haproxy configuration file."
+            ((i++))
+        fi
+    done
+}
+
+if grep "$generated_flag" "$haproxy_file_cnf" >& /dev/null; then
+    echo "\"$haproxy_file_cnf\" has been modified, skipping..."
+else
+    echo "mha configuration \"$haproxy_file_cnf\" is not initialized."
+    init_haproxy_conf "$@"
+fi
+
 echo "**********************************************"
 echo "checking mha ssh..."
 masterha_check_ssh --conf="$file_cnf"
 echo "**********************************************"
 echo "checking mha repl to mysql..."
 masterha_check_repl --conf="$file_cnf"
+echo "**********************************************"
+echo "setup haproxy..."
+haproxy -f "$haproxy_file_cnf" -p /var/run/haproxy.pid -sf `cat /var/run/haproxy.pid` &>/dev/null
 
 if [ "$(ps aux | pgrep '/usr/local/bin/masterha_manager' || echo $?)" == 1 ]; then
     echo "**********************************************"

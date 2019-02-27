@@ -1,6 +1,5 @@
 #!/bin/bash
 # usage: 容器之间的ssh-copy-id
-# author: prontera@github
 
 #set -x
 set -eo pipefail

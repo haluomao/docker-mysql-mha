@@ -1,6 +1,5 @@
 #!/bin/bash
 # usage: 从环境变量中读取SSH_ROOT_PASSWORD的值, 用于设置容器中的root用户密码
-# author: prontera@github
 
 #set -x
 set -eo pipefail

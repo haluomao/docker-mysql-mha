@@ -1,4 +1,6 @@
 #!/bin/bash
+# usage: 在容器外运行, 在failover后运行，重新配置各容器的ssh
+
 #set -x
 set -eo pipefail
 shopt -s nullglob
@@ -42,25 +44,7 @@ aprint(){
     echo "$(tput setaf 2)>>> $1 $(tput sgr0)"
 }
 
-aprint "Docker Compose starting..."
-docker-compose up -d
-
-aprint "Setting ssh..."
+aprint "Repair ssh..."
 ssh-interconnect
-
-aprint "Creating mysql user for replication named 'repl' on master container..."
-docker-compose exec master /mha_share/create-repl-account.sh
-
-aprint "Configuring replication with GTID mode..."
-for c_name in ${service_name[*]}; do
-    if [[ "$c_name" =~ slave_.* ]]; then
-        echo "configuring $c_name $c_id ..."
-        docker exec "$c_id" /mha_share/change-master.sh
-    fi
-done
-sleep 5
-
-aprint "Initializing MHA configuration..."
-docker-compose exec manager /preparation/bootstrap.sh ${service_name[*]}
 
 aprint "Done!"
