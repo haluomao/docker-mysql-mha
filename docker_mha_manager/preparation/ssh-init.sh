@@ -9,7 +9,7 @@ var_pass=SSH_ROOT_PASSWORD
 
 # 无参函数
 # 根据环境变量SSH_ROOT_PASSWORD修改当前的root密码
-change_password(){
+change_password() {
     local password=${!var_pass:-}
     # 检测是否存在对应的环境变量
     if [[ ! "$password" ]]; then
@@ -20,13 +20,13 @@ change_password(){
     echo "root:$password" | chpasswd && echo "$HOSTNAME change the password of root successfully."
 }
 
-restart_ssh(){
+restart_ssh() {
     service ssh restart > /dev/null && echo "$HOSTNAME SSH service has been restarted." || echo "$HOSTNAME fail to restart SSH service!"
 }
 
 # 无参函数
 # 生成ssh密钥对, 如果已经存在则忽略
-generate_key(){
+generate_key() {
     if [[ ! -e "$HOME/.ssh/id_rsa.pub"  ]]; then
         ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa > /dev/null && echo "$HOSTNAME succeed in generating ssh key." || echo "$HOSTNAME fail to generate ssh key."
     fi

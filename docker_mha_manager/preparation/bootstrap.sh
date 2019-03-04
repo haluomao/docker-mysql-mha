@@ -10,18 +10,18 @@ haproxy_file_cnf=/preparation/haproxy.cfg
 generated_flag="# generated"
 
 # 传输需要检测的参数的名称, 如果不存在则抛出异常
-check_env(){
+check_env() {
     local var="$1"
     if [[ -z ${!var:-} ]]; then
         echo >&2 "$HOSTNAME the environment variable \"$var\" do not exist!"
     fi
 }
 
-append_to_conf(){
+append_to_conf() {
     echo "$@" >> "$file_cnf"
 }
 
-init_conf(){
+init_conf() {
     check_env "MYSQL_REPL_NAME"
     check_env "MYSQL_REPL_NAME"
     check_env "MYSQL_REPL_NAME"
@@ -54,7 +54,7 @@ else
     init_conf "$@"
 fi
 
-init_haproxy_conf(){
+init_haproxy_conf() {
     echo "    $generated_flag" >> "$haproxy_file_cnf"
 
     i=1
@@ -65,6 +65,14 @@ init_haproxy_conf(){
             ((i++))
         fi
     done
+}
+
+start_haproxy() {
+    if [ -f "/var/run/haproxy.pid" ]; then
+        haproxy -f "$haproxy_file_cnf" -p /var/run/haproxy.pid -sf `cat /var/run/haproxy.pid`
+    else
+        haproxy -f "$haproxy_file_cnf" -p /var/run/haproxy.pid
+    fi
 }
 
 if grep "$generated_flag" "$haproxy_file_cnf" >& /dev/null; then
@@ -78,11 +86,13 @@ echo "**********************************************"
 echo "checking mha ssh..."
 masterha_check_ssh --conf="$file_cnf"
 echo "**********************************************"
-echo "checking mha repl to mysql..."
-masterha_check_repl --conf="$file_cnf"
-echo "**********************************************"
 echo "setup haproxy..."
-haproxy -f "$haproxy_file_cnf" -p /var/run/haproxy.pid -sf `cat /var/run/haproxy.pid` &>/dev/null
+start_haproxy
+echo "**********************************************"
+echo "checking mha repl to mysql..."
+set +e
+masterha_check_repl --conf="$file_cnf"
+set -e
 
 if [ "$(ps aux | pgrep '/usr/local/bin/masterha_manager' || echo $?)" == 1 ]; then
     echo "**********************************************"

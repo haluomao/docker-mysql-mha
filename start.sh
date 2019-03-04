@@ -38,7 +38,7 @@ ssh-interconnect() {
 }
 
 # 将接收到的参数使用ANSI颜色打印到控制台
-aprint(){
+aprint() {
     echo "$(tput setaf 2)>>> $1 $(tput sgr0)"
 }
 
@@ -58,7 +58,7 @@ for c_name in ${service_name[*]}; do
         docker exec "$c_id" /mha_share/change-master.sh
     fi
 done
-sleep 5
+sleep 10
 
 aprint "Initializing MHA configuration..."
 docker-compose exec manager /preparation/bootstrap.sh ${service_name[*]}

@@ -2,7 +2,7 @@ FROM debian:jessie
 
 COPY ./preparation /preparation
 RUN build_deps='ssh sshpass supervisor perl libdbi-perl libmodule-install-perl libdbd-mysql-perl \
-    libconfig-tiny-perl liblog-dispatch-perl libparallel-forkmanager-perl make haproxy' \
+    libconfig-tiny-perl liblog-dispatch-perl libparallel-forkmanager-perl make haproxy vim' \
     && pack='/preparation' \
     && mkdir -p /var/cache/apt/archives \
     && apt-get clean \

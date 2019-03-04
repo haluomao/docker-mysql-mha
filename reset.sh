@@ -6,8 +6,6 @@ shopt -s nullglob
 echo "$(tput setaf 2)" "Shutting down..." "$(tput sgr0)"
 docker-compose down
 echo "$(tput setaf 2)" "Deleting libs and logs..." "$(tput sgr0)"
-echo "$(tput setaf 2)" "Done!" "$(tput sgr0)"
-exit 0
 # 跳过下面删除数据库的操作
 for dir in ./mha_*; do
     if [[ "$dir" =~ mha_(master|slave_.*) ]]; then
@@ -18,4 +16,8 @@ for dir in ./mha_*; do
         fi
     fi
 done
+
+echo "$(tput setaf 2)" "Done!" "$(tput sgr0)"
+exit 0
+
 

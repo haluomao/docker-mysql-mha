@@ -40,7 +40,7 @@ ssh-interconnect() {
 }
 
 # 将接收到的参数使用ANSI颜色打印到控制台
-aprint(){
+aprint() {
     echo "$(tput setaf 2)>>> $1 $(tput sgr0)"
 }
 

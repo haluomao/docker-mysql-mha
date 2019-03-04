@@ -12,8 +12,8 @@ fi
 
 mysql_cmd=( mysql -p"$MYSQL_ROOT_PASSWORD" )
 
-for i in {10..0}; do
-	echo "$HOSTNAME MySQL init process in progress..."
+for i in {60..0}; do
+	echo "$HOSTNAME MySQL init process in progress...countdown $i seconds"
 	if echo 'SELECT 1' | "${mysql_cmd[@]}" &> /dev/null; then
 		echo "$HOSTNAME MySQL init process done!"
 		break

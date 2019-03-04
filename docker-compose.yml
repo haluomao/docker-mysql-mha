@@ -7,16 +7,16 @@ services:
             - "./docker_mha_share/:/mha_share/"
     mha_node:
         build: ./docker_mha_node
-        image: vio/mha_node
+        image: vio/mha_node:1.0
         read_only: true
         environment:
             - MYSQL_ROOT_PASSWORD=123456
     mha_manager:
         build: ./docker_mha_manager
-        image: vio/mha_manager
+        image: vio/mha_manager:1.0
         read_only: true
     master:
-        image: vio/mha_node
+        image: vio/mha_node:1.0
         depends_on:
             - mha_node
         ports:
@@ -30,8 +30,10 @@ services:
             - mha_share
         env_file:
             - ./account.env
+        entrypoint:
+            - /preparation/mysql_daemon.sh
     slave_1:
-        image: vio/mha_node
+        image: vio/mha_node:1.0
         depends_on:
             - master
         ports:
@@ -44,8 +46,10 @@ services:
             - mha_share
         env_file:
             - ./account.env
+        entrypoint:
+            - /preparation/mysql_daemon.sh
     manager:
-        image: vio/mha_manager
+        image: vio/mha_manager:1.0
         depends_on:
             - mha_manager
             - slave_1

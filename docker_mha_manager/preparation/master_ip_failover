@@ -62,7 +62,8 @@ sub main {
 }
 
 sub restart_haproxy() {
-    `/preparation/restart_haproxy.sh $new_master_host $new_master_port \"`;
+    `/preparation/restart_haproxy.sh $new_master_host $new_master_port`;
+    print "Restart haproxy to the new master Done!";
 }
 
 sub usage {
